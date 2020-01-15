@@ -38,3 +38,30 @@ router.post("/", (req, res) => {
       });
     });
 });
+
+router.post("/:id/comments", (req, res) => {
+  const { id } = req.params;
+  const { text } = req.body;
+
+  findById(id)
+    .then(post => {
+      if (!post) {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist." });
+      } else if (!text) {
+        res
+          .status(400)
+          .json({ errorMessage: "Please provide text for the comment." });
+      } else {
+        insertComment({ text, post_id: id }).then(comment => {
+          res.status(201).json(comment);
+        });
+      }
+    })
+    .catch(() => {
+      res.status(500).json({
+        error: "There was an error while saving the comment to the database"
+      });
+    });
+});

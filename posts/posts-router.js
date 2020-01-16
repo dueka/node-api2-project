@@ -1,19 +1,16 @@
 const express = require("express");
-const Posts = require("../data/db");
-const router = express.Router();
+const {
+  find,
+  findById,
+  insert,
+  update,
+  remove,
+  findPostComments,
+  findCommentById,
+  insertComment
+} = require("../data/db");
 
-router.get("/", (req, res) => {
-  Posts.find(req.query)
-    .then(posts => {
-      res.status(200).json(posts);
-    })
-    .catch(error => {
-      console.log(error);
-      res.status(500).json({
-        errorMessage: "The posts information could not be retrieved."
-      });
-    });
-});
+const router = express.Router();
 
 router.post("/", (req, res) => {
   const newPost = {
@@ -62,6 +59,18 @@ router.post("/:id/comments", (req, res) => {
     .catch(() => {
       res.status(500).json({
         error: "There was an error while saving the comment to the database"
+      });
+    });
+});
+
+router.get("/", (req, res) => {
+  find()
+    .then(posts => {
+      res.status(200).json(posts);
+    })
+    .catch(error => {
+      res.status(500).json({
+        error: "The posts information could not be retrieved."
       });
     });
 });
